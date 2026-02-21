@@ -1,20 +1,23 @@
 import java.util.*;
 
 public class OnboardingService {
-    private final FakeDb db;
+    private final Saver db;
+    private logger l;
+    private Validator v;
+    private Parser p;
 
-    public OnboardingService(FakeDb db) { this.db = db; }
+    public OnboardingService(Saver db) {
+        this.db = db;
+        l=new logger();
+        p=new Parser();
+        v=new Validator();
+    }
 
     // Intentionally violates SRP: parses + validates + creates ID + saves + prints.
     public void registerFromRawInput(String raw) {
-        System.out.println("INPUT: " + raw);
+        l.logInput(raw);
 
-        Map<String,String> kv = new LinkedHashMap<>();
-        String[] parts = raw.split(";");
-        for (String p : parts) {
-            String[] t = p.split("=", 2);
-            if (t.length == 2) kv.put(t[0].trim(), t[1].trim());
-        }
+        Map<String,String> kv = p.parse(raw);
 
         String name = kv.getOrDefault("name", "");
         String email = kv.getOrDefault("email", "");
@@ -22,15 +25,9 @@ public class OnboardingService {
         String program = kv.getOrDefault("program", "");
 
         // validation inline, printing inline
-        List<String> errors = new ArrayList<>();
-        if (name.isBlank()) errors.add("name is required");
-        if (email.isBlank() || !email.contains("@")) errors.add("email is invalid");
-        if (phone.isBlank() || !phone.chars().allMatch(Character::isDigit)) errors.add("phone is invalid");
-        if (!(program.equals("CSE") || program.equals("AI") || program.equals("SWE"))) errors.add("program is invalid");
-
-        if (!errors.isEmpty()) {
-            System.out.println("ERROR: cannot register");
-            for (String e : errors) System.out.println("- " + e);
+        List<String> error = v.validate(name,email,phone,program);
+        if(!error.isEmpty()){
+            l.logerrors(error);
             return;
         }
 
@@ -39,9 +36,6 @@ public class OnboardingService {
 
         db.save(rec);
 
-        System.out.println("OK: created student " + id);
-        System.out.println("Saved. Total students: " + db.count());
-        System.out.println("CONFIRMATION:");
-        System.out.println(rec);
+        l.logSuccess(id,db.count(),rec);
     }
 }
