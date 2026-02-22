@@ -21,7 +21,7 @@ public class EligibilityEngine {
 
         // OCP violation: long chain for each rule
         for(Non_eligibility now:rules){
-            now.check(s,reasons);
+            if(now.check(s,reasons)) break;
         }
         if(!reasons.isEmpty()) status = "NOT_ELIGIBLE";
         return new EligibilityEngineResult(status, reasons);
