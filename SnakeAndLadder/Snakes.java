@@ -2,8 +2,17 @@ import java.util.*;
 
 class Snakes {
     public static void generate(Map<Integer, Integer> snakes, int n) {
-        snakes.put(14, 7);
-        snakes.put(31, 26);
-        snakes.put(38, 20);
+        Random random = new Random();
+        Set<Integer> usedStarts = new HashSet<>();
+
+        while (snakes.size() < n) {
+            int start = random.nextInt(99) + 2;
+            int end = random.nextInt(start - 1) + 1;
+
+            if (start != end && !usedStarts.contains(start)) {
+                snakes.put(start, end);
+                usedStarts.add(start);
+            }
+        }
     }
 }
