@@ -1,24 +1,17 @@
 import java.util.*;
 
 class Level {
-    int id;
+    int floorNumber;
     List<ParkingSpot> spots = new ArrayList<>();
+    List<Gate> gates = new ArrayList<>();
 
-    Map<Integer, Gate> gates = new HashMap<>();
-
-    Level(int id) {
-        this.id = id;
+    public Level(int floorNumber) {
+        this.floorNumber = floorNumber;
     }
-
-    void addSpot(ParkingSpot spot) {
+    public void addSpot(ParkingSpot spot) {
         spots.add(spot);
     }
-
-    void addGate(Gate gate) {
-        gates.put(gate.id, gate);
-    }
-
-    Collection<Gate> getGates() {
-        return gates.values();
+    public void addGate(Gate gate) {
+        gates.add(gate);
     }
 }

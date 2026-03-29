@@ -1,28 +1,39 @@
 import java.time.*;
+import java.util.*;
 
 class ParkingLot {
 
     ParkingManager manager;
-    FareCalculator calculator;
+    FareCalculator fareCalculator;
 
-    ParkingLot(ParkingManager manager, FareCalculator calculator) {
+    public ParkingLot(ParkingManager manager, FareCalculator calculator) {
         this.manager = manager;
-        this.calculator = calculator;
+        this.fareCalculator = calculator;
     }
 
-    Ticket park(Vehicle vehicle, LocalDateTime entryTime, int gateId) {
-        return manager.park(vehicle, entryTime, gateId);
+    Ticket create(String ticketId, Vehicle vehicle, int entryGate) {
+        ParkingSpot spot = manager.parkVehicle(vehicle);
+        if (spot == null) {
+            System.out.println("No spot available");
+            return null;
+        }
+
+        return new Ticket(ticketId, vehicle, LocalDateTime.now(), spot, entryGate);
     }
 
-    double exit(Ticket ticket, LocalDateTime exitTime) {
-        ticket.exitTime = exitTime;
-
-        manager.unpark(ticket);
-
-        return calculator.calculate(ticket);
+    double exit(Ticket ticket) {
+        ticket.exitTime = LocalDateTime.now();
+        manager.unparkVehicle(ticket.vehicle);
+        return fareCalculator.calculateFare(ticket);
     }
 
     void status() {
-        System.out.println(manager.getStatus());
+        System.out.println("Parking Status:");
+        for (Level level : manager.levels) {
+            for (ParkingSpot spot : level.spots) {
+                System.out.println("Spot " + spot.spotNumber +
+                        " -> " + (spot.isAvailable() ? "Free" : "Occupied"));
+            }
+        }
     }
 }

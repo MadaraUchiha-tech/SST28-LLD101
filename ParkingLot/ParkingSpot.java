@@ -1,22 +1,54 @@
-class ParkingSpot {
-    int id;
-    SlotType type;
-    boolean occupied = false;
+abstract class ParkingSpot {
+    int spotNumber;
+    Vehicle vehicle;
+    double hourlyRate;
 
-    ParkingSpot(int id, SlotType type) {
-        this.id = id;
-        this.type = type;
+    public ParkingSpot(int spotNumber, double hourlyRate) {
+        this.spotNumber = spotNumber;
+        this.hourlyRate = hourlyRate;
     }
 
     boolean isAvailable() {
-        return !occupied;
+        return vehicle == null;
     }
 
-    void park() {
-        occupied = true;
+    void occupy(Vehicle v) {
+        this.vehicle = v;
     }
 
-    void free() {
-        occupied = false;
+    void vacate() {
+        this.vehicle = null;
+    }
+
+    abstract boolean canFitVehicle(Vehicle vehicle);
+}
+
+class SmallSpot extends ParkingSpot {
+    public SmallSpot(int num) {
+        super(num, 10);
+    }
+
+    boolean canFitVehicle(Vehicle v) {
+        return v.type == VehicleType.BIKE;
+    }
+}
+
+class MediumSpot extends ParkingSpot {
+    public MediumSpot(int num) {
+        super(num, 20);
+    }
+
+    boolean canFitVehicle(Vehicle v) {
+        return v.type == VehicleType.CAR||v.type == VehicleType.BIKE;
+    }
+}
+
+class LargeSpot extends ParkingSpot {
+    public LargeSpot(int num) {
+        super(num, 30);
+    }
+
+    boolean canFitVehicle(Vehicle v) {
+        return true;
     }
 }

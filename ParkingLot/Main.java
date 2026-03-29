@@ -1,66 +1,47 @@
-import java.time.*;
 import java.util.*;
+import java.time.*;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args){
+
+        Level level1 = new Level(1);
+
+        level1.addSpot(new SmallSpot(1));
+        level1.addSpot(new SmallSpot(2));
+        level1.addSpot(new MediumSpot(3));
+        level1.addSpot(new MediumSpot(4));
+        level1.addSpot(new LargeSpot(5));
 
         ParkingManager manager = new ParkingManager();
+        manager.levels.add(level1);
 
-        Level l1 = new Level(1);
+        FareStrategy strategy = new DefaultFareStrategy();
+        FareCalculator calculator = new FareCalculator(strategy);
 
-        ParkingSpot s1 = new ParkingSpot(1, SlotType.SMALL);
-        ParkingSpot s2 = new ParkingSpot(2, SlotType.MEDIUM);
-        ParkingSpot s3 = new ParkingSpot(3, SlotType.LARGE);
+        ParkingLot lot = new ParkingLot(manager, calculator);
 
-        l1.addSpot(s1);
-        l1.addSpot(s2);
-        l1.addSpot(s3);
+        Vehicle car = new Bike("KA-01-1234");
+        Vehicle bike = new Bike("KA-02-5678");
+        Vehicle bus = new Bike("KA-03-9999");
 
-        manager.allSpots.put(1, s1);
-        manager.allSpots.put(2, s2);
-        manager.allSpots.put(3, s3);
-
-        Level l2 = new Level(2);
-
-        ParkingSpot s4 = new ParkingSpot(4, SlotType.SMALL);
-        ParkingSpot s5 = new ParkingSpot(5, SlotType.LARGE);
-
-        l2.addSpot(s4);
-        l2.addSpot(s5);
-
-        manager.allSpots.put(4, s4);
-        manager.allSpots.put(5, s5);
-
-        Gate gate1 = new Gate(1, GateType.ENTRY);
-        gate1.addDistance(1, 5);
-        gate1.addDistance(2, 3);
-        gate1.addDistance(3, 1);
-        gate1.addDistance(4, 7);
-        gate1.addDistance(5, 6);
-
-        manager.gates.put(1, gate1);
-
-        l1.addGate(gate1);
-        l2.addGate(gate1);
-
-        manager.levels.add(l1);
-        manager.levels.add(l2);
-
-        Map<VehicleType, Double> rates = new HashMap<>();
-        rates.put(VehicleType.BIKE, 10.0);
-        rates.put(VehicleType.CAR, 20.0);
-        rates.put(VehicleType.BUS, 30.0);
-
-        ParkingLot lot = new ParkingLot(manager, new FareCalculator(rates));
-
-        Vehicle bike = new Bike("KA-01");
-
-        Ticket t = lot.park(bike, LocalDateTime.now(), 1);
+        Ticket t1 = lot.create("T1", car, 1);
+        Ticket t2 = lot.create("T2", bike, 1);
+        Ticket t3 = lot.create("T3", bus, 1);
 
         lot.status();
 
-        double bill = lot.exit(t, LocalDateTime.now().plusHours(3));
 
-        System.out.println("Bill = " + bill);
+        System.out.println("Exiting Vehicles");
+
+        double fare1 = lot.exit(t1);
+        System.out.println("Car Fare: " + fare1);
+
+        double fare2 = lot.exit(t2);
+        System.out.println("Bike Fare: " + fare2);
+
+        double fare3 = lot.exit(t3);
+        System.out.println("Bus Fare: " + fare3);
+
+        lot.status();
     }
 }

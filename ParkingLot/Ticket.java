@@ -1,23 +1,23 @@
 import java.time.*;
 
 class Ticket {
-    String id;
+    String ticketId;
     Vehicle vehicle;
-    ParkingSpot spot;
-    Gate entryGate;
     LocalDateTime entryTime;
     LocalDateTime exitTime;
+    ParkingSpot spot;
+    int entryGate;
 
-    Ticket(String id, Vehicle v, ParkingSpot s, Gate gate, LocalDateTime entryTime) {
-        this.id = id;
+    public Ticket(String id, Vehicle v, LocalDateTime entryTime, ParkingSpot spot, int gate) {
+        this.ticketId = id;
         this.vehicle = v;
-        this.spot = s;
-        this.entryGate = gate;
         this.entryTime = entryTime;
+        this.spot = spot;
+        this.entryGate = gate;
     }
 
-    long getDurationHours() {
+    long calculateParkingDuration() {
         if (exitTime == null) return 0;
-        return Math.max(1, Duration.between(entryTime, exitTime).toHours());
+        return Duration.between(entryTime, exitTime).toHours();
     }
 }

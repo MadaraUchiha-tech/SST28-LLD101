@@ -1,16 +1,11 @@
-import java.util.*;
-
 class FareCalculator {
+    FareStrategy strategy;
 
-    Map<VehicleType, Double> rates;
-
-    FareCalculator(Map<VehicleType, Double> rates) {
-        this.rates = rates;
+    public FareCalculator(FareStrategy strategy) {
+        this.strategy = strategy;
     }
 
-    double calculate(Ticket ticket) {
-        long hours = ticket.getDurationHours();
-        double rate = rates.get(ticket.vehicle.type);
-        return hours * rate;
+    double calculateFare(Ticket ticket) {
+        return strategy.calculateFare(ticket, ticket.spot.hourlyRate);
     }
 }

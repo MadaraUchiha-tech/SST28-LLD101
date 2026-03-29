@@ -1,17 +1,21 @@
-import java.util.*;
-
-class Gate {
-    int id;
+abstract class Gate {
+    int gateNumber;
     GateType type;
 
-    Map<Integer, Integer> distanceMap = new HashMap<>();
-
-    Gate(int id, GateType type) {
-        this.id = id;
+    public Gate(int gateNumber, GateType type) {
+        this.gateNumber = gateNumber;
         this.type = type;
     }
+}
 
-    void addDistance(int slotId, int distance) {
-        distanceMap.put(slotId, distance);
+class EntryGate extends Gate {
+    public EntryGate(int num) {
+        super(num, GateType.ENTRY);
+    }
+}
+
+class ExitGate extends Gate {
+    public ExitGate(int num) {
+        super(num, GateType.EXIT);
     }
 }
